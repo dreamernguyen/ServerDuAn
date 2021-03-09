@@ -11,8 +11,10 @@ import tinNhanRouter from "./routers/tinNhanRouter.js";
 import baiVietRouter from "./routers/baiVietRouter.js";
 import binhLuanRouter from "./routers/binhLuanRouter.js";
 
+const PORT = process.env.PORT || 5000
+
 const app = express();
-const port = 3000;
+
 const databaseURL =
   "mongodb+srv://nhannbt:nhanne@cluster0-hw1yh.mongodb.net/dbYoKaFo?retryWrites=true&w=majority";
 
@@ -37,8 +39,8 @@ mongoose
 
 
 //socket.io
-const server = app.listen(port,()=>{
-  console.log(`Đang chạy trên port ${port}`)
+const server = app.listen(PORT,()=>{
+  console.log(`Đang chạy trên port ${PORT}`)
 })
 
 const io = new Server(server);
