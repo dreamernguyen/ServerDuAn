@@ -40,50 +40,27 @@ export async function danhSachBaiViet(req, res) {
   }
 }
 
-export async function danhSachDangTheoDoi(req, res) {
-  try {
-    const nguoiDung = await NguoiDung.findById(req.params.id);
-    if(nguoiDung){
-      const dangTheoDoi = nguoiDung.dangTheoDoi;
-      let dsBaiViet
-      if(dangTheoDoi.length > 0){
-        for (let index = 0; index < dangTheoDoi.length ; index++) {
-         dsBaiViet = await BaiViet.aggregate([
-          { $match : {idNguoiDung : dangTheoDoi[index], trangThai : true}},
-          { $sort : {thoiGianTao : - 1} }
-        ])
-        console.log(`mảng đang chạy :  ${dsBaiViet}`)
-        res.send(dsBaiViet)
-      }
-      }
-    }else{
-      res.send({thongBao : "Không tìm thấy người dùng"})
-      console.log("Không tìm thấy người dùng")
-    }
-  } catch (error) {
-    console.log(error)
-  }
-}
-
 // export async function danhSachDangTheoDoi(req, res) {
 //   try {
 //     const nguoiDung = await NguoiDung.findById(req.params.id);
 //     if(nguoiDung){
 //       const dangTheoDoi = nguoiDung.dangTheoDoi;
+//       let dsBaiViet = new Array()
 //       if(dangTheoDoi.length > 0){
-//         var mang = [];
-//         console.log(mang)
 //         for (let index = 0; index < dangTheoDoi.length ; index++) {
-//           const element = dangTheoDoi[index];
-//           const dsBaiViet = await BaiViet.find({idNguoiDung : element,trangThai : true}).populate('idNguoiDung','hoTen')
-//           // console.log(element)
-//           console.log(dsBaiViet.length)
-//           mang = mang.concat(dsBaiViet)
-          
-//         }
-//         console.log(`Mảng cuối :${mang}`)
-//         res.send({danhSachBaiViet : mang})
+//           const a = await BaiViet.aggregate([
+//           { $match : {idNguoiDung : dangTheoDoi[index]}},
+//           { $project : {thoiGianTao : 1,idNguoiDung : 1}}
+//         ]).exec().then((rs)=>{
+//             dsBaiViet.push(rs)
+//         })
         
+//         console.log(`mảng đang chạy :  ${dangTheoDoi[index]}`)
+//         console.log(`mảng đang chạy :  ${dsBaiViet}`)
+        
+//       }
+      
+//       res.send(dsBaiViet)
 //       }
 //     }else{
 //       res.send({thongBao : "Không tìm thấy người dùng"})
@@ -93,6 +70,36 @@ export async function danhSachDangTheoDoi(req, res) {
 //     console.log(error)
 //   }
 // }
+
+export async function danhSachDangTheoDoi(req, res) {
+  try {
+    const nguoiDung = await NguoiDung.findById(req.params.id);
+    if(nguoiDung){
+      const dangTheoDoi = nguoiDung.dangTheoDoi;
+      if(dangTheoDoi.length > 0){
+        var mang = [];
+        console.log(mang)
+        for (let index = 0; index < dangTheoDoi.length ; index++) {
+          const element = dangTheoDoi[index];
+          const dsBaiViet = await BaiViet.find({idNguoiDung : element,trangThai : true}).populate('idNguoiDung','hoTen')
+          // console.log(element)
+          console.log(dsBaiViet.length)
+          mang = mang.concat(dsBaiViet)
+          
+        }
+        mang.sort(function(a, b){return a.thoiGianTao - b.thoiGianTao});
+        console.log(`Mảng cuối :${mang}`)
+        res.send({danhSachBaiViet : mang})
+        
+      }
+    }else{
+      res.send({thongBao : "Không tìm thấy người dùng"})
+      console.log("Không tìm thấy người dùng")
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
 
 
 export async function xoaBaiViet (req, res) {
