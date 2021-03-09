@@ -27,6 +27,9 @@ app.use("/tinNhan/", tinNhanRouter);
 app.use("/baiViet/",baiVietRouter );
 app.use("/binhLuan/",binhLuanRouter );
 
+app.get('/',(req,res)=>{
+  res.send("ok")
+})
 //kết nối đến database
 mongoose
   .connect(databaseURL, { useNewUrlParser: true, useUnifiedTopology: true })
