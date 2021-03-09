@@ -11,8 +11,10 @@ import tinNhanRouter from "./routers/tinNhanRouter.js";
 import baiVietRouter from "./routers/baiVietRouter.js";
 import binhLuanRouter from "./routers/binhLuanRouter.js";
 
-const app = express();
 const PORT = process.env.PORT || 5000
+
+const app = express();
+
 const databaseURL =
   "mongodb+srv://nhannbt:nhanne@cluster0-hw1yh.mongodb.net/dbYoKaFo?retryWrites=true&w=majority";
 
@@ -28,7 +30,6 @@ app.use("/binhLuan/",binhLuanRouter );
 app.get('/',(req,res)=>{
   res.send("ok")
 })
-
 //kết nối đến database
 mongoose
   .connect(databaseURL, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -58,15 +59,13 @@ io.on("connection", (socket) => {
     socket.id = hihi
     
   })
-  // io.emit("thongBao", `Server nhắn cho ${socket.id}`);
+  io.to(socket.id).emit("tinNhan", `Server nhắn cho ${socket.id}`);
   // io.emit("thongBao","Nhàn đẹp trai vl")
-  TinNhan.watch().on('change',async(change)=>{
+  TinNhan.watch().on('change',(change)=>{
     console.log('Something has changed')
-    const test = await TinNhan.findById(change.fullDocument._id).populate('idNguoiNhan idNguoiGui','hoTen')
-    io.emit("tinNhan",test)
-    console.log(test)
+    // io.to(change.fullDocument._id).emit('changes',change.fullDocument)
      
-    
+    io.emit("thongBao","có tin nhắn mới")
 })
 
   socket.on("disconnect", () => {
