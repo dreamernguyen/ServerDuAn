@@ -67,8 +67,8 @@ export async function danhSachLienHe(req,res){
   
 }
 export async function troChuyen(req,res){
-  const idNguoi1 = req.params.idNguoi1;
-  const idNguoi2 = req.params.idNguoi2;
+  const idNguoi1 = req.body.idNguoi1;
+  const idNguoi2 = req.body.idNguoi2;
   console.log(idNguoi1)
   console.log(idNguoi2)
   const a = {$and :
