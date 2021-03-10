@@ -59,7 +59,7 @@ io.on("connection", (socket) => {
     socket.id = hihi
     
   })
-  io.to(socket.id).emit("tinNhan", `Server nhắn cho ${socket.id}`);
+//   io.to(socket.id).emit("tinNhan", `Server nhắn cho ${socket.id}`);
   // io.emit("thongBao","Nhàn đẹp trai vl")
   TinNhan.watch().on('change',(change)=>{
     console.log('Something has changed')
