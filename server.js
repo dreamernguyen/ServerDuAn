@@ -63,9 +63,9 @@ io.on("connection", (socket) => {
   // io.emit("thongBao","Nhàn đẹp trai vl")
   TinNhan.watch().on('change',(change)=>{
     console.log('Something has changed')
-    // io.to(change.fullDocument._id).emit('changes',change.fullDocument)
+    io.emit('tinNhan',change.fullDocument)
      
-    io.emit("thongBao","có tin nhắn mới")
+//     io.emit("thongBao","có tin nhắn mới")
 })
 
   socket.on("disconnect", () => {
