@@ -6,11 +6,10 @@ export async function nhanTin(req,res){
     const tinNhan = new TinNhan(req.body)
     try {
         await tinNhan.save()
-        res.send(tinNhan);
+        res.send({thongBao : "Đã tạo tin nhắn mới"});
         console.log('Đã tạo tin nhắn mới')
     } catch (error) {
-        res.send(error.message)
-        console.log('Lỗi')
+        console.log(error)
     }
     
 }
