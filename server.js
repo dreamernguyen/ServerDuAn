@@ -64,7 +64,11 @@ io.on("connection", (socket) => {
   TinNhan.watch().on('change',(change)=>{
     console.log('Something has changed')
     console.log(change.fullDocument)
-    io.emit('tinNhan',change.fullDocument)
+    TinNhan.findById(change.fullDocument._id).populate("idNguoiGui idNguoiNhan").then(rs => {
+      io.emit('tinNhan',rs)
+    })
+    
+    
      
 //     io.emit("thongBao","có tin nhắn mới")
 })
