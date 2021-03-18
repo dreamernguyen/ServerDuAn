@@ -9,6 +9,9 @@ import {
   danhSachDangTheoDoi,
   chiTietBaiViet,
   chinhSuaBaiViet,
+  thichBaiViet,
+  boThichBaiViet,
+  danhSachBaiVietYeuThich,
 } from "../controllers/baiVietController.js";
 
 const router = express.Router();
@@ -20,6 +23,9 @@ router.post("/capNhat/:id", chinhSuaBaiViet);
 router.post("/xoa/:id", xoaBaiViet);
 router.post("/an/:id", anBaiViet);
 router.get("/dangTheoDoi/:id",danhSachDangTheoDoi);
+router.post("/thich",thichBaiViet );
+router.post("/boThich", boThichBaiViet);
+router.get("/danhSachYeuThich/:id",danhSachBaiVietYeuThich)
 // router.post('/danhSachAn/:id', danhSachBaiVietAn)
 router.post("/huyAn/:id", huyAnBaiViet);
 // router.post('/danhSachCuaToi/:id', danhSachBaiVietCuaToi)

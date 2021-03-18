@@ -2,8 +2,9 @@ import mongoose from 'mongoose';
 
 const nguoiDungSchema = mongoose.Schema(
   {
-    email: { type: String, required: true, trim: true },
-    sdt: { type: Number, trim: true },
+    avatar : {type : String, default : ""},
+    email: { type: String, trim: true },
+    sdt: { type: Number, required: true, trim: true },
     matKhau: { type: String, required: true },
     hoTen: { type: String, required: true, trim: true },
     tuoi: { type: Number, trim: true },

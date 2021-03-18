@@ -1,5 +1,6 @@
 import NguoiDung from "../models/nguoiDung.js";
 import BaiViet from "../models/baiViet.js";
+import QRCode from 'qrcode'
 
 export async function dangKy(req, res) {
   const nguoiDungMoi = new NguoiDung(req.body);
@@ -26,6 +27,7 @@ export async function dangNhap(req, res) {
       if(matKhau == nguoiDung.matKhau){
         res.send({
           thongBao: `Đăng nhập thành công !`,
+          nguoiDung : nguoiDung
         });
       }else if(matKhau != nguoiDung.matKhau){
         res.send({
@@ -58,14 +60,14 @@ export async function xemTrangCaNhan(req, res) {
   try {
     const nguoiDung = await NguoiDung.findById(req.params.id);
     if(nguoiDung){
-      const danhSach = await BaiViet.find({idNguoiDung: req.params.id, trangThai: true}).populate('idNguoiDung','hoTen');
-      if (danhSach.length <= 0){
-        res.send({thongBao: "Người dùng này chưa có bài viết nào"})
-      } else {
+      const danhSach = await BaiViet.find({idNguoiDung: req.params.id, trangThai: true})
+      .populate('idNguoiDung luotThich');
+     
         res.send({
+          nguoiDung : nguoiDung,
           danhSachBaiViet: danhSach
         })
-      }
+      
     }else{
         res.send({thongBao : "Không tìm thấy người dùng"})
     }
@@ -75,14 +77,10 @@ export async function xemTrangCaNhan(req, res) {
 }
 
 export async function theoDoi(req, res) {
-  // console.log(req.params.idNguoi1)
-  // console.log(req.query.idNguoi1)
-  console.log(req.body.idNguoi1)
-  console.log(req.body.idNguoi2)
 
   try {
-    const nguoiTheoDoi = await NguoiDung.findById(req.body.idNguoi1);
-    const nguoiDuocTheoDoi = await NguoiDung.findById(req.body.idNguoi2);
+    const nguoiTheoDoi = await NguoiDung.findById(req.body.idNguoiTheoDoi);
+    const nguoiDuocTheoDoi = await NguoiDung.findById(req.body.idNguoiDuocTheoDoi);
     if(nguoiTheoDoi){
       console.log(`Người theo dõi :${nguoiTheoDoi.hoTen}`)
       if(nguoiDuocTheoDoi){
@@ -93,9 +91,11 @@ export async function theoDoi(req, res) {
       }
       else{
         console.log('Không tìm thấy người được theo dõi')
+        res.send({thongBao : 'Không tìm thấy người được theo dõi' })
       }
     }else{
       console.log('Không tìm thấy người theo dõi')
+      res.send({thongBao : 'Không tìm thấy người theo dõi' })
     }
   } catch (error) {
     console.log(error)
@@ -104,14 +104,10 @@ export async function theoDoi(req, res) {
 }
 
 export async function huyTheoDoi(req, res) {
-  // console.log(req.params.idNguoi1)
-  // console.log(req.query.idNguoi1)
-  console.log(req.body.idNguoi1)
-  console.log(req.body.idNguoi2)
 
   try {
-    const nguoiTheoDoi = await NguoiDung.findById(req.body.idNguoi1);
-    const nguoiDuocTheoDoi = await NguoiDung.findById(req.body.idNguoi2);
+    const nguoiTheoDoi = await NguoiDung.findById(req.body.idNguoiTheoDoi);
+    const nguoiDuocTheoDoi = await NguoiDung.findById(req.body.idNguoiDuocTheoDoi);
     if(nguoiTheoDoi){
       console.log(`Người theo dõi :${nguoiTheoDoi.dangTheoDoi}`)
       if(nguoiDuocTheoDoi){
@@ -122,12 +118,67 @@ export async function huyTheoDoi(req, res) {
       }
       else{
         console.log('Không tìm thấy người được theo dõi')
+        res.send({thongBao : 'Không tìm thấy người được theo dõi' })
       }
     }else{
       console.log('Không tìm thấy người theo dõi')
+      res.send({thongBao : 'Không tìm thấy người theo dõi' })
     }
   } catch (error) {
     console.log(error)
   }
 
+}
+
+export async function checkTheoDoi(req, res) {
+
+  // try {
+  //   const nguoiTheoDoi = await NguoiDung.findById(req.body.idNguoiTheoDoi);
+  //   const nguoiDuocTheoDoi = await NguoiDung.findById(req.body.idNguoiDuocTheoDoi);
+  //   if(nguoiTheoDoi){
+  //     if(nguoiDuocTheoDoi){
+  //       const rs = await NguoiDung.findOne({_id : nguoiDuocTheoDoi._id,duocTheoDoi : {$all : nguoiTheoDoi._id}});
+  //       if(rs){
+  //         console.log(rs)
+  //         res.send({thongBao : `Đã theo dõi ${nguoiDuocTheoDoi.hoTen} rồi`})
+  //       }else{
+  //         res.send({thongBao : `Chưa theo dõi ${nguoiDuocTheoDoi.hoTen} `})
+  //       }
+        
+  //     }
+  //     else{
+  //       console.log('Không tìm thấy người được theo dõi')
+  //       res.send({thongBao : 'Không tìm thấy người được theo dõi' })
+  //     }
+  //   }else{
+  //     console.log('Không tìm thấy người theo dõi')
+  //     res.send({thongBao : 'Không tìm thấy người theo dõi' })
+  //   }
+  // } catch (error) {
+  //   console.log(error)
+  // }
+  var opts = {
+    errorCorrectionLevel: 'H',
+    type: 'image/jpeg',
+    quality: 0.3,
+    margin: 1,
+    color: {
+      dark:"#010599FF",
+      light:"#FFBF60FF"
+    }
+  }
+  QRCode.toDataURL('Dreamer', opts, function (err, url) {
+    if (err) throw err
+    res.send(url)
+  })
+
+}
+
+export async function checkEmailDaTonTai(req,res){
+  try {
+    const nguoiDung = await NguoiDung.findOne({email : req.params.email})
+    res.send({nguoiDung : nguoiDung})
+  } catch (error) {
+    console.log(error)
+  }
 }

@@ -7,36 +7,38 @@ export async function dangBai(req, res) {
     linkAnh: req.body.linkAnh,
     idNguoiDung: req.params.id,
   };
-  const nguoiDung = await NguoiDung.findById(req.params.id)
-  if (nguoiDung){
+  const nguoiDung = await NguoiDung.findById(req.params.id);
+  if (nguoiDung) {
     try {
       const baiViet = new BaiViet(BVM);
       await baiViet.save();
       res.send({
-        thongBao: "Đã đăng bài viết thành công"
-      })
+        thongBao: "Đã đăng bài viết thành công",
+      });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   } else {
     res.send({
-      thongBao: "Không tìm thấy người dùng"
+      thongBao: "Không tìm thấy người dùng",
     });
-    console.log("Không tìm thấy người dùng")
+    console.log("Không tìm thấy người dùng");
   }
 }
 export async function danhSachBaiViet(req, res) {
   try {
-    const baiViet = await BaiViet.find({trangThai: true,duyetBai: true}).populate('idNguoiDung', 'hoTen');
-    if(baiViet.length <= 0) {
+    const list = await BaiViet.find({
+      trangThai: true,
+    }).populate("idNguoiDung luotThich");
+    if (list.length <= 0) {
       res.send({
-        thongBao: "Danh sách bài viết trống"
-      })
+        thongBao: "Danh sách bài viết trống",
+      });
     } else {
-      res.send(baiViet);
+      res.send({danhSachBaiViet : list});
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
 
@@ -54,12 +56,12 @@ export async function danhSachBaiViet(req, res) {
 //         ]).exec().then((rs)=>{
 //             dsBaiViet.push(rs)
 //         })
-        
+
 //         console.log(`mảng đang chạy :  ${dangTheoDoi[index]}`)
 //         console.log(`mảng đang chạy :  ${dsBaiViet}`)
-        
+
 //       }
-      
+
 //       res.send(dsBaiViet)
 //       }
 //     }else{
@@ -74,85 +76,87 @@ export async function danhSachBaiViet(req, res) {
 export async function danhSachDangTheoDoi(req, res) {
   try {
     const nguoiDung = await NguoiDung.findById(req.params.id);
-    if(nguoiDung){
+    if (nguoiDung) {
       const dangTheoDoi = nguoiDung.dangTheoDoi;
-      if(dangTheoDoi.length > 0){
+      if (dangTheoDoi.length > 0) {
         var mang = [];
-        console.log(mang)
-        for (let index = 0; index < dangTheoDoi.length ; index++) {
+        console.log(mang);
+        for (let index = 0; index < dangTheoDoi.length; index++) {
           const element = dangTheoDoi[index];
-          const dsBaiViet = await BaiViet.find({idNguoiDung : element,trangThai : true}).populate('idNguoiDung','hoTen')
+          const dsBaiViet = await BaiViet.find({
+            idNguoiDung: element,
+            trangThai: true,
+          }).populate("idNguoiDung luotThich");
           // console.log(element)
-          console.log(dsBaiViet.length)
-          mang = mang.concat(dsBaiViet)
-          
+          console.log(dsBaiViet.length);
+          mang = mang.concat(dsBaiViet);
         }
-        mang.sort(function(a, b){return a.thoiGianTao - b.thoiGianTao});
-        console.log(`Mảng cuối :${mang}`)
-        res.send({danhSachBaiViet : mang})
-        
+        mang.sort(function (a, b) {
+          return a.thoiGianTao - b.thoiGianTao;
+        });
+        console.log(`Mảng cuối :${mang}`);
+        res.send({ danhSachBaiViet: mang });
       }
-    }else{
-      res.send({thongBao : "Không tìm thấy người dùng"})
-      console.log("Không tìm thấy người dùng")
+    } else {
+      res.send({ thongBao: "Không tìm thấy người dùng" });
+      console.log("Không tìm thấy người dùng");
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
-
-
-export async function xoaBaiViet (req, res) {
+export async function xoaBaiViet(req, res) {
   try {
-    const baiViet = await BaiViet.findById(req.params.id)
-    if(baiViet){
-      await BaiViet.findByIdAndDelete(req.params.id)
+    const baiViet = await BaiViet.findById(req.params.id);
+    if (baiViet) {
+      await BaiViet.findByIdAndDelete(req.params.id);
       res.send({
-        thongBao: `Đã xóa thành công ${baiViet.noiDung}`
-      })
-    } else{
+        thongBao: `Đã xóa thành công ${baiViet.noiDung}`,
+      });
+    } else {
       res.send({
-        thongBao: "Không tìm thấy bài viết"
-      })
+        thongBao: "Không tìm thấy bài viết",
+      });
     }
   } catch (error) {
-    throw new Error("Lỗi")
-    console.log(error)
+    throw new Error("Lỗi");
+    console.log(error);
   }
 }
-export async function anBaiViet(req, res){
+export async function anBaiViet(req, res) {
   try {
-    const baiViet = await BaiViet.findById(req.params.id)
-    if(baiViet){
+    const baiViet = await BaiViet.findById(req.params.id);
+    if (baiViet) {
       const anBai = {
         $set: {
           trangThai: false,
-        }
-      }
-      await BaiViet.updateOne({_id: req.params.id}, anBai)
+        },
+      };
+      await BaiViet.updateOne({ _id: req.params.id }, anBai);
       res.send({
-        thongBao: `Đã ẩn bài viết ${baiViet.noiDung}`
-      })
+        thongBao: `Đã ẩn bài viết ${baiViet.noiDung}`,
+      });
     } else {
-      res.send({thongBao: "Không tìm thấy bài viết"})
+      res.send({ thongBao: "Không tìm thấy bài viết" });
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
-
-export async function chiTietBaiViet(req, res){
+export async function chiTietBaiViet(req, res) {
   try {
-    const baiViet = await BaiViet.findById(req.params.id).populate('idNguoiDung','hoTen')
-    if(baiViet){
+    const baiViet = await BaiViet.findById(req.params.id).populate(
+      "idNguoiDung luotThich"
+    );
+    if (baiViet) {
       res.send({
-        baiViet: baiViet
-      })
+        baiViet: baiViet,
+      });
     } else {
-      res.send({thongBao: "Không tìm thấy bài viết"})
+      res.send({ thongBao: "Không tìm thấy bài viết" });
     }
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
 export async function huyAnBaiViet(req, res) {
@@ -164,18 +168,17 @@ export async function huyAnBaiViet(req, res) {
           trangThai: true,
         },
       };
-      await BaiViet.updateOne({_id: req.params.id}, baiViet2);
+      await BaiViet.updateOne({ _id: req.params.id }, baiViet2);
       res.send({
         thongBao: `Đã hủy ẩn bài viết ${baiViet.noiDung}`,
       });
     } else {
-      res.send({thongBao: "Không tìm thấy bài viết"});
+      res.send({ thongBao: "Không tìm thấy bài viết" });
     }
   } catch (error) {
     console.log(error);
   }
 }
-
 export async function chinhSuaBaiViet(req, res) {
   try {
     const baiViet = await BaiViet.findById(req.params.id);
@@ -192,15 +195,90 @@ export async function chinhSuaBaiViet(req, res) {
           noiDung: req.body.noiDung,
         },
       };
-      await BaiViet.updateOne({_id: req.params.id},capNhat );
+      await BaiViet.updateOne({ _id: req.params.id }, capNhat);
       // const linkAnh = matHang.linkAnh
       res.send({
         thongBao: "Cập nhật thành công",
       });
     }
   } catch (error) {
-    console.log(error)
-    throw new Error("Lỗi")
-    
+    console.log(error);
+    throw new Error("Lỗi");
+  }
+}
+
+export async function thichBaiViet(req, res) {
+  try {
+    const nguoiDung = await NguoiDung.findById(req.body.idNguoiDung);
+    const baiViet = await BaiViet.findById(req.body.idBaiViet);
+    if (baiViet) {
+      if (nguoiDung) {
+        await BaiViet.updateOne(
+          { _id: baiViet._id },
+          { $push: { luotThich: nguoiDung } }
+        ).exec().then(bv=>{
+          res.send({
+            thongBao: `Theo dõi thành công ${baiViet.noiDung}`,
+          });
+        });
+        
+      } else {
+        console.log("Không tìm thấy người dùng");
+        res.send({ thongBao: "Không tìm thấy người dùng" });
+      }
+    } else {
+      console.log("Không tìm thấy bài viết");
+      res.send({ thongBao: "Không tìm thấy bài viết" });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function boThichBaiViet(req, res) {
+  try {
+    const nguoiDung = await NguoiDung.findById(req.body.idNguoiDung);
+    const baiViet = await BaiViet.findById(req.body.idBaiViet);
+    if (baiViet) {
+      if (nguoiDung) {
+        await BaiViet.updateOne(
+          { _id: baiViet._id },
+          { $pull: { luotThich: nguoiDung._id } }
+        ).exec().then(bv =>{
+          res.send({
+            thongBao: `Dislike ${baiViet.noiDung}`,
+          });
+        });
+       
+      } else {
+        console.log("Không tìm thấy người dùng");
+        res.send({ thongBao: "Không tìm thấy người dùng" });
+      }
+    } else {
+      console.log("Không tìm thấy bài viết");
+      res.send({ thongBao: "Không tìm thấy bài viết" });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export async function danhSachBaiVietYeuThich(req, res) {
+  try {
+    const nguoiDung = await NguoiDung.findById(req.params.id);
+    if (nguoiDung) {
+      const rs = await BaiViet.find({ luotThich: { $all: nguoiDung._id } });
+      if (rs.length > 0) {
+        console.log(rs);
+        res.send({ danhSachBaiViet: rs });
+      } else {
+        res.send({ thongBao: `Chưa yêu thích bài viết nào ` });
+      }
+    } else {
+      console.log("Không tìm thấy người dùng");
+      res.send({ thongBao: "Không tìm thấy người dùng" });
+    }
+  } catch (error) {
+    console.log(error);
   }
 }
