@@ -28,7 +28,7 @@ export async function dangBai(req, res) {
 export async function danhSachBaiViet(req, res) {
   try {
     const list = await BaiViet.find({
-      trangThai: true,
+      trangThai: true,duyetBai : true
     }).populate("idNguoiDung luotThich");
     if (list.length <= 0) {
       res.send({
@@ -86,6 +86,7 @@ export async function danhSachDangTheoDoi(req, res) {
           const dsBaiViet = await BaiViet.find({
             idNguoiDung: element,
             trangThai: true,
+            duyetBai : true
           }).populate("idNguoiDung luotThich");
           // console.log(element)
           console.log(dsBaiViet.length);
